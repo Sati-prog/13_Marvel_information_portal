@@ -40,6 +40,7 @@ class CharInfo extends Component {
         }
 
         this.onCharLoading();
+
         this.marvelService
             .getCharacter(charId)
             .then(this.onCharLoaded)
@@ -83,6 +84,7 @@ class CharInfo extends Component {
         const content = !(loading || error || !char) ? <View char={char}/> : null;
 
         return (
+
             <div className="char__info">
                 {skeleton}
                 {errorMessage}
