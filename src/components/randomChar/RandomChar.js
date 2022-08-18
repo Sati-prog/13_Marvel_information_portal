@@ -2,23 +2,21 @@ import { useState, useEffect } from 'react';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 const RandomChar = () => {
 
-    const [char, setChar] = useState(null),
-          [loading, setLoading] = useState(true),
-          [error, setError] = useState(false);
+    const [char, setChar] = useState(null);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
 
         updateChar();
-        const timerId = setInterval(updateChar, 15000);
+        const timerId = setInterval(updateChar, 60000);
 
         return () => {
 
@@ -26,38 +24,24 @@ const RandomChar = () => {
         }
     }, []);
 
-
     const onCharLoaded = (char) => {
 
         setChar(char);
-        setLoading( false);
-    }
-
-    const onCharLoading = () => {
-
-        setLoading(true);
-    }
-
-    const onError = () => {
-
-        setLoading(false);
-        setError(true);
     }
 
     const updateChar = () => {
 
+        clearError();
+
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-        onCharLoading();
-        marvelService
-            .getCharacter(id)
-            .then(onCharLoaded)
-            .catch(onError);
+        getCharacter(id)
+            .then(onCharLoaded);
     }
 
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? <View char={char}/> : null;
+    const content = !(loading || error || !char) ? <View char={char} /> : null;
 
     return (
 
@@ -96,8 +80,10 @@ const View = ({char}) => {
     return (
 
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"
-            style={imgStyle}/>
+            <img src={thumbnail} 
+                 alt="Random character" 
+                 className="randomchar__img"
+                 style={imgStyle}/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">{description}</p>
