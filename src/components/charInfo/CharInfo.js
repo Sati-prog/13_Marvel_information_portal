@@ -99,8 +99,9 @@ const View = ({char}) => {
 
                         return (
 
-                            <li className="char__comics-item"
-                                key={i}>{item.name}</li>
+                            <li className="char__comics-item" key={i}>
+                                {item.name}
+                            </li>
                         );
                     })
                 }
